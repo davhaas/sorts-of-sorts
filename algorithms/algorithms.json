@@ -1,0 +1,9 @@
+[
+  "selection_sort.yaml",
+  "bubble_sort.yaml",
+  "insertion_sort.yaml",
+  "shell_sort.yaml",
+  "quick_sort.yaml",
+  "quick_sort_average_2.yaml",
+  "quick_sort_average_3.yaml"
+]

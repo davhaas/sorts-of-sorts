@@ -1,0 +1,58 @@
+id: "quick_sort"
+name: "Quick Sort (Lomuto)"
+complexity:
+  best: "O(n log n)"
+  average: "O(n log n)"
+  worst: "O(n^2)"
+runtime_behavior:
+  sorted: "Worst case: O(n^2) for standard Lomuto partitioning if the pivot picks the minimum or maximum element consistently."
+  random: "Average case: O(n log n). Highly efficient algorithm separating elements cleanly into recursive balances."
+  reversed: "Worst case: O(n^2). Extreme imbalance occurs when the pivot element fails to bisect the data cleanly."
+description: >
+  A divide-and-conquer algorithm. It picks an element as a pivot and partitions the given array around the picked pivot, sorting sub-arrays recursively.
+display_code:
+  - "function quickSort(arr, low, high) {"
+  - "  if (low < high) {"
+  - "    let pivot = arr[high];"
+  - "    let i = low - 1;"
+  - "    for (let j = low; j < high; j++) {"
+  - "      if (arr[j] < pivot) {"
+  - "        i++;"
+  - "        swap(arr, i, j);"
+  - "      }"
+  - "    }"
+  - "    swap(arr, i + 1, high);"
+  - "    let pi = i + 1;"
+  - "    quickSort(arr, low, pi - 1);"
+  - "    quickSort(arr, pi + 1, high);"
+  - "  }"
+  - "}"
+generator_code: >
+  function* quickSort(arr) {
+    function* quickSortHelper(low, high) {
+      yield { line: 1, vars: { low, high } };
+      if (low < high) {
+        let pivot = arr[high];
+        let i = low - 1;
+        yield { line: 3, vars: { low, high, pivot, i } };
+        for (let j = low; j < high; j++) {
+          yield { line: 5, compare: [j, high], vars: { low, high, pivot, i, j } };
+          if (arr[j] < pivot) {
+            i++;
+            let temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+            yield { line: 7, swap: [i, j], vars: { low, high, pivot, i, j } };
+          }
+        }
+        let temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+        yield { line: 10, swap: [i + 1, high], vars: { low, high, pivot, i } };
+        let pi = i + 1;
+        yield* quickSortHelper(low, pi - 1);
+        yield* quickSortHelper(pi + 1, high);
+      }
+    }
+    yield* quickSortHelper(0, arr.length - 1);
+  }

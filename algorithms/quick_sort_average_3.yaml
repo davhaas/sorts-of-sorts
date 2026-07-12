@@ -1,0 +1,72 @@
+id: "quick_sort_average_3"
+name: "Quick Sort (Average 3)"
+complexity:
+  best: "O(n log n)"
+  average: "O(n log n)"
+  worst: "O(n^2)"
+runtime_behavior:
+  sorted: "Best case: O(n log n). Averaging three distributed elements guarantees robust resistance to pre-sorted inputs."
+  random: "Average case: O(n log n). Solid, well-balanced partitioning on random arrangements."
+  reversed: "Worst case: O(n^2). Extremely rare, as picking a multi-point average heavily suppresses worst-case degenerate splits."
+description: >
+  An advanced variation of Quick Sort where the pivot is selected by averaging three values: the first, the last, and the exact middle element of the sub-segment.
+display_code:
+  - "function quickSort(arr, p, r) {"
+  - "  if (p < r) {"
+  - "    let q = partition(arr, p, r);"
+  - "    quickSort(arr, p, q);"
+  - "    quickSort(arr, q + 1, r);"
+  - "  }"
+  - "}"
+  - ""
+  - "function partition(arr, p, r) {"
+  - "  let mid = Math.floor((p + r) / 2);"
+  - "  let x = Math.floor((arr[p] + arr[r] + arr[mid]) / 3);"
+  - "  let i = p - 1, j = r + 1;"
+  - "  while (true) {"
+  - "    do { j--; } while (arr[j] > x);"
+  - "    do { i++; } while (arr[i] < x);"
+  - "    if (i < j) swap(arr, i, j);"
+  - "    else return j;"
+  - "  }"
+  - "}"
+generator_code: >
+  function* quickSort(arr) {
+    function* quickSortHelper(p, r) {
+      yield { line: 1, vars: { p, r } };
+      if (p < r) {
+        // Inline Partitioning
+        yield { line: 9, vars: { p, r } };
+        let mid = Math.floor((p + r) / 2);
+        let x = Math.floor((arr[p] + arr[r] + arr[mid]) / 3);
+        yield { line: 10, vars: { p, r, mid, x } };
+        let i = p - 1, j = r + 1;
+        yield { line: 11, vars: { p, r, x, i, j } };
+        
+        while (true) {
+          while (true) {
+            j--;
+            yield { line: 13, compare: [j], vars: { p, r, x, i, j } };
+            if (arr[j] <= x) break;
+          }
+          while (true) {
+            i++;
+            yield { line: 14, compare: [i], vars: { p, r, x, i, j } };
+            if (arr[i] >= x) break;
+          }
+          
+          if (i < j) {
+            let temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+            yield { line: 15, swap: [i, j], vars: { p, r, x, i, j } };
+          } else {
+            let q = j;
+            yield { line: 16, vars: { p, r, x, i, j, q } };
+            yield* quickSortHelper(p, q);
+            yield* quickSortHelper(q + 1, r);
+            break;
+          }
+        }
+      }
+    }
+    yield* quickSortHelper(0, arr.length - 1);
+  }

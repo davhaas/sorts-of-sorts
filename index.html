@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorts of Sorts - Interactive Sorting Visualizer</title>
+    <!-- Outfit Font & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <!-- JS-YAML CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="src/index.css">
+</head>
+
+<body>
+
+    <div id="left-panel">
+        <div class="panel-header">
+            <h1>Sorts of Sorts</h1>
+            <div class="subtitle">Interactive Sorting Algorithm Visualizer</div>
+        </div>
+
+        <div class="panel-content">
+            <!-- Collapsible Accordion for Settings -->
+            <div id="controls-accordion" class="accordion open">
+                <div class="accordion-header" id="accordion-toggle">
+                    <span>Algorithm Settings</span>
+                    <span class="accordion-arrow">▲</span>
+                </div>
+                <div class="accordion-content">
+                    <!-- Algorithm Selection -->
+                    <div class="control-section">
+                        <div class="section-title">Select Algorithm</div>
+                        <div class="form-group">
+                            <select id="select-algo">
+                                <!-- Dynamically filled -->
+                                <option value="" disabled selected>Loading algorithms...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Array Generator Configuration -->
+                    <div class="control-section">
+                        <div class="section-title">Array Parameters</div>
+                        <div class="form-group">
+                            <label for="slider-size">Number of Items: <span id="val-size"
+                                    class="value">30</span></label>
+                            <input type="range" id="slider-size" min="5" max="250" value="30">
+                        </div>
+                        <div class="form-group">
+                            <label for="select-order">Initial Order</label>
+                            <select id="select-order">
+                                <option value="random">Random Data</option>
+                                <option value="sorted">Already Sorted</option>
+                                <option value="reversed">Reversed Data</option>
+                            </select>
+                        </div>
+                        <button id="btn-generate" class="secondary">
+                            Generate New Data
+                        </button>
+                    </div>
+
+                    <!-- Execution Speed -->
+                    <div class="control-section">
+                        <div class="section-title">Speed Slider</div>
+                        <div class="form-group">
+                            <label for="slider-speed">Delay (ms): <span id="val-speed" class="value">20
+                                    ms</span></label>
+                            <input type="range" id="slider-speed" min="0" max="1000" step="5" value="20">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Play / Step / Finish Controls (Always Visible, above code trace) -->
+            <div class="control-section execution-section">
+                <div class="btn-group-three">
+                    <button id="btn-play" class="primary">Play</button>
+                    <button id="btn-step" class="secondary">Step</button>
+                    <button id="btn-finish" class="secondary highlight-btn">Finish</button>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn-generate-shortcut" class="secondary"
+                        style="flex: 1; padding: 8px 12px; font-size: 11px;">
+                        New Data
+                    </button>
+                    <button id="btn-clear-breakpoints" class="secondary"
+                        style="flex: 1; padding: 8px 12px; font-size: 11px;">
+                        Clear Breakpoints
+                    </button>
+                </div>
+            </div>
+
+            <!-- Local Variable Watcher (Visually hidden but logic kept) -->
+            <div class="control-section" id="variables-watch-section" style="display: none;">
+                <div class="section-title">Variables Watch</div>
+                <div class="variables-card">
+                    <div class="variables-grid" id="variables-display">
+                        <div
+                            style="grid-column: 1 / -1; color: var(--text-muted); font-size: 12px; text-align: center;">
+                            Start sorting to watch variables
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Code Display panel -->
+            <div class="control-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                <div class="section-title">Trace Code</div>
+                <div id="code-display-container">
+                    <div class="code-header">
+                        <span>Source Code (Click line number for Breakpoint)</span>
+                    </div>
+                    <div id="code-display">
+                        <!-- Code lines are dynamically injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="right-panel">
+        <!-- Top Navigation / Stats bar -->
+        <div class="top-navbar">
+            <div class="algo-metadata">
+                <h2 id="algo-title">Loading Algorithm...</h2>
+                <div class="complexity-badges">
+                    <span class="badge best">Best: <b id="val-best">-</b></span>
+                    <span class="badge average">Avg: <b id="val-avg">-</b></span>
+                    <span class="badge worst">Worst: <b id="val-worst">-</b></span>
+                </div>
+            </div>
+
+            <div class="counters-row">
+                <div class="counter-card">
+                    <span class="counter-label">Compares</span>
+                    <span class="counter-value" id="count-compares">0</span>
+                </div>
+                <div class="counter-card">
+                    <span class="counter-label">Swaps/Writes</span>
+                    <span class="counter-value" id="count-swaps">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- HTML5 Canvas Visualizer Container -->
+        <div id="canvas-container">
+            <div id="canvas-overlay" class="canvas-overlay">
+                <div class="overlay-title" id="overlay-title">Sorts of Sorts Visualizer</div>
+                <div class="overlay-desc" id="overlay-desc">Select an algorithm and click Generate Data / Play.</div>
+            </div>
+            <canvas id="visualizer-canvas"></canvas>
+        </div>
+
+        <!-- Description Card -->
+        <div class="bottom-info-panel">
+            <h4>Algorithm Description</h4>
+            <p id="algo-desc">Loading description...</p>
+            <h4 style="margin-top: 6px;">Runtime Performance Behavior</h4>
+            <p id="algo-performance">Loading performance insights...</p>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script type="module" src="src/app.js"></script>
+</body>
+
+</html>

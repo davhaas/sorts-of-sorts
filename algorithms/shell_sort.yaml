@@ -1,0 +1,58 @@
+id: "shell_sort"
+name: "Shell Sort"
+complexity:
+  best: "O(n log n)"
+  average: "O(n^(7/6))"
+  worst: "O(n^2)"
+runtime_behavior:
+  sorted: "Best case: O(n log n). The elements are already in order, so the inner insertion loops terminate immediately, resulting in minimal shifts."
+  random: "Average case: O(n^(7/6)) to O(n^(5/4)) depending on the gap sequence used."
+  reversed: "Worst case: O(n^2). Every insertion step has to shift elements across the full length of the gap, causing maximum work."
+description: >
+  An extension of insertion sort that allows the exchange of far-apart elements. 
+  It compares elements separated by a gap that decreases over time, significantly 
+  reducing the total amount of shifting required.
+display_code:
+  - "function shellSort(arr) {"
+  - "  let n = arr.length;"
+  - "  for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {"
+  - "    for (let i = gap; i < n; i += 1) {"
+  - "      let temp = arr[i];"
+  - "      let j;"
+  - "      for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {"
+  - "        arr[j] = arr[j - gap];"
+  - "      }"
+  - "      arr[j] = temp;"
+  - "    }"
+  - "  }"
+  - "  return arr;"
+  - "}"
+generator_code: >
+  function* shellSort(arr) {
+    let n = arr.length;
+    yield { line: 1, vars: { n } };
+    for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {
+      yield { line: 2, vars: { n, gap } };
+      for (let i = gap; i < n; i += 1) {
+        yield { line: 3, vars: { n, gap, i } };
+        let temp = arr[i];
+        yield { line: 4, vars: { n, gap, i, temp } };
+        let j;
+        yield { line: 5, vars: { n, gap, i, temp, j } };
+        for (j = i; j >= gap; j -= gap) {
+          // arr[j - gap] is compared to temp (which is originally arr[i])
+          yield { line: 6, compare: [j - gap, i], vars: { n, gap, i, temp, j } };
+          if (arr[j - gap] > temp) {
+            arr[j] = arr[j - gap];
+            yield { line: 7, assign: [j, arr[j - gap]], vars: { n, gap, i, temp, j } };
+          } else {
+            break;
+          }
+        }
+        arr[j] = temp;
+        yield { line: 9, assign: [j, temp], vars: { n, gap, i, temp, j } };
+      }
+    }
+    yield { line: 12, vars: { n } };
+    return arr;
+  }
