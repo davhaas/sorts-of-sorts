@@ -16,7 +16,8 @@ export function updateCodePanel(container, currentAlgorithm, vm, onBreakpointTog
         }
 
         const trimmed = line.trim();
-        const isNonExecutable = /^(\}$|^\{$|^\s*|\/\/.*)$/.test(trimmed);
+        // const isNonExecutable = /^(\}$|^\{$|^\s*|\/\/.*)$/.test(trimmed);
+        const isNonExecutable = false;
 
         const numCol = document.createElement('div');
         numCol.className = 'line-number-col';

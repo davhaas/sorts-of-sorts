@@ -587,6 +587,7 @@ button:disabled {
 }
 
 /* Overlay message */
+/*
 .canvas-overlay {
     position: absolute;
     top: 0;
@@ -599,6 +600,25 @@ button:disabled {
     justify-content: center;
     background: rgba(10, 10, 15, 0.8);
     backdrop-filter: blur(4px);
+    z-index: 5;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+*/
+.canvas-overlay {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    flex-direction: column;
+
+    /* Dark blue semi-transparent background */
+    background-color: rgba(0, 0, 139, 0.8);
+    padding: 10px 15px;
+    border-radius: 6px;
+    color: white;
+    font-family: sans-serif; /* Ensuring a clean font */
+
     z-index: 5;
     pointer-events: none;
     transition: opacity 0.3s ease;
