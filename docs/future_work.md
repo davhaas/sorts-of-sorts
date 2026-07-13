@@ -4,6 +4,9 @@ This document tracks potential bugs, architectural edge cases, and robustness up
 
 ---
 
+## 0. Bugs
+* There is a bug in the breakpoint code that makes it off by one.  To stop on a line you need to breakpoint the line under it.  There is a temporary tweak that is allowing numbering of non-executable lines to get around this.
+
 ## 1. Execution State & UI Synchronization
 * **Issue:** Modifying application state (changing algorithms, adjusting parameters, or altering inputs) while the execution is **Paused** can leave the internal generator out of sync. The generator (`this.activeGenerator`) retains the old state, while the UI displays the new configuration.
 * **Impact:** Resuming execution after making changes can cause unpredictable behavior, visual glitches, or application crashes.
