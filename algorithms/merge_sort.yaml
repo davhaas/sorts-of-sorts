@@ -1,0 +1,87 @@
+id: "merge_sort"
+name: "Merge Sort (In-Place)"
+complexity:
+  best: "O(n log n)"
+  average: "O(n^2)"
+  worst: "O(n^2)"
+runtime_behavior:
+  sorted: "Best case: O(n log n). If already sorted, the shift loop never executes."
+  random: "Average case: O(n^2). The in-place shifting logic adds significant overhead compared to standard Merge Sort."
+  reversed: "Worst case: O(n^2). Maximum shifting required for every merge step."
+description: >
+  A variant of Merge Sort that sorts the array without using extra memory. While memory-efficient, the 'shifting' required to merge in-place makes it slower than the standard version.
+display_code:
+  - "function mergeSort(arr, start, end) {"
+  - "  if (start < end) {"
+  - "    let mid = Math.floor((start + end) / 2);"
+  - "    mergeSort(arr, start, mid);"
+  - "    mergeSort(arr, mid + 1, end);"
+  - "    let p1 = start, p2 = mid + 1;"
+  - "    while (p1 <= mid && p2 <= end) {"
+  - "      if (arr[p1] <= arr[p2]) { p1++; }"
+  - "      else {"
+  - "        let val = arr[p2], idx = p2;"
+  - "        while (idx > p1) {"
+  - "          arr[idx] = arr[idx - 1];"
+  - "          idx--;"
+  - "        }"
+  - "        arr[p1] = val;"
+  - "        p1++; mid++; p2++;"
+  - "      }"
+  - "    }"
+  - "  }"
+  - "}"
+generator_code: >
+  function* mergeSort(arr) {
+    function* sort(start, end) {
+      yield { line: 2, vars: { start, end } };
+      if (start < end) {
+        let mid = Math.floor((start + end) / 2);
+        yield { line: 3, vars: { start, end, mid } };
+        
+        yield { line: 4, vars: { start, end, mid } };
+        yield* sort(start, mid);
+        
+        yield { line: 5, vars: { start, end, mid } };
+        yield* sort(mid + 1, end);
+        
+        let p1 = start;
+        let p2 = mid + 1;
+        yield { line: 6, vars: { start, end, mid, p1, p2 } };
+        
+        while (true) {
+          yield { line: 7, compare: (p1 <= mid && p2 <= end) ? [p1, p2] : [], vars: { start, end, mid, p1, p2 } };
+          if (p1 <= mid && p2 <= end) {
+            if (arr[p1] <= arr[p2]) {
+              p1++;
+              yield { line: 8, vars: { start, end, mid, p1, p2 } };
+            } else {
+              let val = arr[p2];
+              let idx = p2;
+              yield { line: 10, vars: { start, end, mid, p1, p2, val, idx } };
+              
+              while (true) {
+                yield { line: 11, vars: { start, end, mid, p1, p2, val, idx } };
+                if (idx > p1) {
+                  arr[idx] = arr[idx - 1];
+                  yield { line: 12, assign: [idx, arr[idx-1]], vars: { start, end, mid, p1, p2, val, idx } };
+                  idx--;
+                  yield { line: 13, vars: { start, end, mid, p1, p2, val, idx } };
+                } else {
+                  break;
+                }
+              }
+              arr[p1] = val;
+              yield { line: 15, assign: [p1, val], vars: { start, end, mid, p1, p2, val } };
+              
+              p1++; mid++; p2++;
+              yield { line: 16, vars: { start, end, mid, p1, p2 } };
+            }
+          } else {
+            break;
+          }
+        }
+      }
+    }
+    yield* sort(0, arr.length - 1);
+  }

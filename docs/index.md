@@ -7,7 +7,7 @@ Welcome to the documentation for **Sorts of Sorts**, an interactive sorting algo
 1. [Problem Statement](problem_statement.md) - Context and educational goals of the visualizer.
 2. [Implementation Plan](implementation_plan.md) - The architectural and design blueprint for this project.
 3. [How It Works](how_it_works.md) - Architectural deep-dive into execution loops and visual state machines.
-4. [Changelog](changelog.md) - Record of project milestones and features implemented.
+4. [Changelog](../changelog.md) - Record of project milestones and features implemented.
 
 For instructions on running the project, please refer to the main [README.md](../README.md).
 
@@ -18,20 +18,24 @@ For instructions on running the project, please refer to the main [README.md](..
 The project layout is structured as follows:
 
 *   `/algorithms/` - Contains the algorithm plugin definitions.
-    *   [algorithms.json](file:///g:/GitHub/sorts-of-sorts/algorithms/algorithms.json) - **Algorithm Registry**. This index file tells the web application which algorithms to download on startup.
-    *   [shell_sort.yaml](file:///g:/GitHub/sorts-of-sorts/algorithms/shell_sort.yaml) - **Shell Sort Definition**. The description, complexity, visual code representation, and VM execution generator for Shell Sort.
+    *   `algorithms.json` - **Algorithm Registry**. This index file tells the web application which algorithms to download on startup.
+    *   `*.yaml` - Individual algorithm definitions containing descriptions, complexity specs, and visual code/generator mappings (e.g., `bubble_sort.yaml`, `shell_sort.yaml`).
 *   `/docs/` - Contains project documentation.
-    *   [index.md](file:///g:/GitHub/sorts-of-sorts/docs/index.md) - Master documentation directory (this file).
-    *   [problem_statement.md](file:///g:/GitHub/sorts-of-sorts/docs/problem_statement.md) - Educational context and requirements.
-    *   [how_it_works.md](file:///g:/GitHub/sorts-of-sorts/docs/how_it_works.md) - Deep-dive into internal application machinery.
-    *   [changelog.md](file:///g:/GitHub/sorts-of-sorts/docs/changelog.md) - Project history.
-*   `/legacy/` - Stores the 24-year-old legacy project files, website extraction screenshots, and `.mp4` video showing the visualizer working.
+    *   `index.md` - Master documentation directory (this file).
+    *   `problem_statement.md` - Educational context and requirements.
+    *   `implementation_plan.md` - Technical specification and architecture plan.
+    *   `how_it_works.md` - Deep-dive into internal application machinery.
+    *   `future_work.md` - Roadmap for future enhancements.
+*   `/legacy/` - Stores the 24-year-old legacy project files, website extraction screenshots, and validation media.
 *   `/src/` - Core application source code.
-    *   [app.js](file:///g:/GitHub/sorts-of-sorts/src/app.js) - **Main Controller**. Initializes layout, canvas sizing, binds control sliders, and coordinates the drawing engine.
-    *   [index.css](file:///g:/GitHub/sorts-of-sorts/src/index.css) - **Design System stylesheet**. Contains styling guidelines, colors, fonts, and animation properties.
-    *   [virtual_machine.js](file:///g:/GitHub/sorts-of-sorts/src/virtual_machine.js) - **Virtual Execution Machine**. Steps through algorithms, updates scopes, tracks metrics, and manages breakpoints.
-*   [index.html](file:///g:/GitHub/sorts-of-sorts/index.html) - The web entry point containing the split pane grid container.
-*   [start.py](file:///g:/GitHub/sorts-of-sorts/start.py) - **Launcher Script**. A Python script that boots a local server on port 8000 and opens the browser. Used in Windows/Git Bash environments.
+    *   `app.js` - **Main Controller**. Orchestrates initialization, hooks up UI controls, and manages asynchronous algorithm fetching transitions.
+    *   `canvas_renderer.js` - **Graphics Engine**. Handles low-level 2D graphics rendering, color configurations, vector grids, and real-time array visualizations.
+    *   `dom_helpers.js` - **UI Utilities**. Manages manual document fragment builders, safe code panel row generation, and analytics view refreshes.
+    *   `virtual_machine.js` - **Virtual Execution Machine**. Steps through algorithms, updates variable scopes, tracks metrics, and manages breakpoints.
+    *   `fallbacks.js` - **Offline Data Fallbacks**. Bundles hardcoded, static algorithmic profiles to ensure seamless operations if network fetching encounters sandbox or CORS limits.
+    *   `index.css` - **Design System stylesheet**. Contains layout layouts, responsive CSS grids, tokens, and visual transitions.
+*   `index.html` - The web entry point containing the split-pane viewport layouts.
+*   `start.py` - **Launcher Script**. Boots a local HTTP server on port 8000 and automatically opens the application in the system browser.
 
 ---
 
@@ -80,7 +84,6 @@ generator_code: >
       let j = i - 1;
       yield { line: 4, vars: { n, i, key, j } };
       while (j >= 0) {
-        // Compare index j and original index i (visualized by key value)
         yield { line: 5, compare: [j, i], vars: { n, i, key, j } };
         if (arr[j] > key) {
           arr[j + 1] = arr[j];
@@ -107,22 +110,7 @@ Add the filename of the new YAML file to the array in `/algorithms/algorithms.js
   "insertion_sort.yaml"
 ]
 ```
-Reloading the page in a web server environment will now automatically fetch, parse, and list the new algorithm in the dropdown.
+Reloading the app over a local web server will now automatically fetch, parse, and list the new algorithm in the UI dropdown.
 
-### Step 3: Register as fallback in `app.js` (Optional but Recommended)
-To support running the app out-of-the-box locally via `file:///` scheme (which blocks HTTP fetches of local YAML files due to CORS), add the parsed object directly into the `loadFallbackAlgorithms()` function inside [src/app.js](file:///g:/GitHub/sorts-of-sorts/src/app.js):
-
-```javascript
-loadFallbackAlgorithms() {
-    // ... shellSortFallback ...
-    
-    const insertionSortFallback = {
-        id: "insertion_sort",
-        name: "Insertion Sort",
-        // ... (copy YAML field values here)
-    };
-    
-    this.algorithms.set(insertionSortFallback.id, insertionSortFallback);
-}
-```
-
+### Step 3: Register as fallback in `fallbacks.js` (Optional but Recommended)
+To support running the app out-of-the-box locally via `file:///` scheme (which blocks HTTP fetches of local files due to CORS browser restrictions), add the parsed object directly into the fallback collections inside `src/fallbacks.js`.

@@ -1,0 +1,97 @@
+id: "merge_sort_scratchpad"
+name: "Merge Sort (O(n) Scratchpad Buffer)"
+complexity:
+  best: "O(n log n)"
+  average: "O(n log n)"
+  worst: "O(n log n)"
+runtime_behavior:
+  sorted: "Best case: O(n log n). Still splits array structures recursively, but merge reads are clean."
+  random: "Average case: O(n log n). Stable sort mechanics copy chunks out to temporary scratchpad workspace bounds."
+  reversed: "Worst case: O(n log n). Guaranteed performance depth at the expense of memory allocations."
+description: "Standard out-of-place execution profile. Leverages an external array allocation buffer workspace to assemble components without destructive elements shift cycles. REQUIRES O(n) EXTRA MEMORY ALLOCATION TRAFFIC."
+display_code:
+  - "function mergeSort(arr, left, right) {"
+  - "  if (left >= right) return;"
+  - "  let mid = Math.floor((left + right) / 2);"
+  - "  mergeSort(arr, left, mid);"
+  - "  mergeSort(arr, mid + 1, right);"
+  - "  // Merge process with scratchpad allocation"
+  - "  let temp = [], i = left, j = mid + 1;"
+  - "  while (i <= mid && j <= right) {"
+  - "    if (arr[i] <= arr[j]) temp.push(arr[i++]);"
+  - "    else temp.push(arr[j++]);"
+  - "  }"
+  - "  while (i <= mid) temp.push(arr[i++]);"
+  - "  while (j <= right) temp.push(arr[j++]);"
+  - "  for (let k = 0; k < temp.length; k++) {"
+  - "    arr[left + k] = temp[k];"
+  - "  }"
+  - "}"
+generator_code: >
+  function* mergeSort(arr) {
+      function* sortHelper(left, right) {
+          yield { line: 2, vars: { left, right } };
+          if (left >= right) return;
+          
+          let mid = Math.floor((left + right) / 2);
+          yield { line: 3, vars: { left, right, mid } };
+          
+          yield { line: 4, vars: { left, right, mid } };
+          yield* sortHelper(left, mid);
+          
+          yield { line: 5, vars: { left, right, mid } };
+          yield* sortHelper(mid + 1, right);
+          
+          let temp = [];
+          let i = left;
+          let j = mid + 1;
+          yield { line: 7, vars: { left, mid, right, temp, i, j } };
+          
+          while (true) {
+              yield { line: 8, vars: { left, mid, right, temp, i, j } };
+              if (i <= mid && j <= right) {
+                  yield { line: 9, compare: [i, j], vars: { left, mid, right, temp, i, j } };
+                  if (arr[i] <= arr[j]) {
+                      temp.push(arr[i]);
+                      i++;
+                      yield { line: 9, vars: { left, mid, right, temp, i, j } };
+                  } else {
+                      temp.push(arr[j]);
+                      j++;
+                      yield { line: 10, vars: { left, mid, right, temp, i, j } };
+                  }
+              } else {
+                  break;
+              }
+          }
+          
+          while (true) {
+              yield { line: 12, vars: { left, mid, i, temp } };
+              if (i <= mid) {
+                  temp.push(arr[i]);
+                  i++;
+                  yield { line: 12, vars: { left, mid, i, temp } };
+              } else {
+                  break;
+              }
+          }
+          
+          while (true) {
+              yield { line: 13, vars: { right, j, temp } };
+              if (j <= right) {
+                  temp.push(arr[j]);
+                  j++;
+                  yield { line: 13, vars: { right, j, temp } };
+              } else {
+                  break;
+              }
+          }
+          
+          for (let k = 0; k < temp.length; k++) {
+              yield { line: 14, vars: { left, mid, right, k, temp } };
+              arr[left + k] = temp[k];
+              yield { line: 15, assign: [left + k, temp[k]], vars: { left, mid, right, k, temp } };
+          }
+      }
+      yield* sortHelper(0, arr.length - 1);
+  }

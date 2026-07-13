@@ -30,27 +30,38 @@ display_code:
 generator_code: >
   function* quickSort(arr) {
     function* quickSortHelper(low, high) {
-      yield { line: 1, vars: { low, high } };
+      yield { line: 2, vars: { low, high } };
       if (low < high) {
         let pivot = arr[high];
+        yield { line: 3, vars: { low, high, pivot } };
         let i = low - 1;
-        yield { line: 3, vars: { low, high, pivot, i } };
+        yield { line: 4, vars: { low, high, pivot, i } };
+        
         for (let j = low; j < high; j++) {
-          yield { line: 5, compare: [j, high], vars: { low, high, pivot, i, j } };
+          yield { line: 5, vars: { low, high, pivot, i, j } };
+          yield { line: 6, compare: [j, high], vars: { low, high, pivot, i, j } };
           if (arr[j] < pivot) {
             i++;
+            yield { line: 7, vars: { low, high, pivot, i, j } };
             let temp = arr[i];
             arr[i] = arr[j];
             arr[j] = temp;
-            yield { line: 7, swap: [i, j], vars: { low, high, pivot, i, j } };
+            yield { line: 8, swap: [i, j], vars: { low, high, pivot, i, j } };
           }
         }
+        
         let temp = arr[i + 1];
         arr[i + 1] = arr[high];
         arr[high] = temp;
-        yield { line: 10, swap: [i + 1, high], vars: { low, high, pivot, i } };
+        yield { line: 11, swap: [i + 1, high], vars: { low, high, pivot, i } };
+        
         let pi = i + 1;
+        yield { line: 12, vars: { low, high, pi } };
+        
+        yield { line: 13, vars: { low, high, pi } };
         yield* quickSortHelper(low, pi - 1);
+        
+        yield { line: 14, vars: { low, high, pi } };
         yield* quickSortHelper(pi + 1, high);
       }
     }

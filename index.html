@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sorts of Sorts - Interactive Sorting Visualizer</title>
+
+    <!-- Inline SVG Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='5' cy='26' r='2' fill='%236366f1'/%3E%3Ccircle cx='9' cy='22' r='2' fill='%23ef4444'/%3E%3Ccircle cx='14' cy='18' r='2.5' fill='%23f59e0b'/%3E%3Ccircle cx='18' cy='15' r='2' fill='%236366f1'/%3E%3Ccircle cx='23' cy='10' r='2.5' fill='%2310b981'/%3E%3Ccircle cx='27' cy='6' r='2' fill='%2310b981'/%3E%3C/svg%3E">
     <!-- Outfit Font & Fira Code -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- JS-YAML CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script src="src/js-yaml.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="src/index.css">
 </head>
@@ -26,106 +27,103 @@
         </div>
 
         <div class="panel-content">
-            <!-- Collapsible Accordion for Settings -->
-            <div id="controls-accordion" class="accordion open">
-                <div class="accordion-header" id="accordion-toggle">
-                    <span>Algorithm Settings</span>
-                    <span class="accordion-arrow">▲</span>
-                </div>
-                <div class="accordion-content">
-                    <!-- Algorithm Selection -->
-                    <div class="control-section">
-                        <div class="section-title">Select Algorithm</div>
-                        <div class="form-group">
-                            <select id="select-algo">
-                                <!-- Dynamically filled -->
-                                <option value="" disabled selected>Loading algorithms...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Array Generator Configuration -->
-                    <div class="control-section">
-                        <div class="section-title">Array Parameters</div>
-                        <div class="form-group">
-                            <label for="slider-size">Number of Items: <span id="val-size"
-                                    class="value">30</span></label>
-                            <input type="range" id="slider-size" min="5" max="250" value="30">
-                        </div>
-                        <div class="form-group">
-                            <label for="select-order">Initial Order</label>
-                            <select id="select-order">
-                                <option value="random">Random Data</option>
-                                <option value="sorted">Already Sorted</option>
-                                <option value="reversed">Reversed Data</option>
-                            </select>
-                        </div>
-                        <button id="btn-generate" class="secondary">
-                            Generate New Data
-                        </button>
-                    </div>
-
-                    <!-- Execution Speed -->
-                    <div class="control-section">
-                        <div class="section-title">Speed Slider</div>
-                        <div class="form-group">
-                            <label for="slider-speed">Delay (ms): <span id="val-speed" class="value">20
-                                    ms</span></label>
-                            <input type="range" id="slider-speed" min="0" max="1000" step="5" value="20">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Play / Step / Finish Controls (Always Visible, above code trace) -->
+            <!-- Play / Step / Finish Controls -->
             <div class="control-section execution-section">
+                <div class="section-title">Execution Controls</div>
                 <div class="btn-group-three">
                     <button id="btn-play" class="primary">Play</button>
                     <button id="btn-step" class="secondary">Step</button>
                     <button id="btn-finish" class="secondary highlight-btn">Finish</button>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn-generate-shortcut" class="secondary"
-                        style="flex: 1; padding: 8px 12px; font-size: 11px;">
-                        New Data
-                    </button>
-                    <button id="btn-clear-breakpoints" class="secondary"
-                        style="flex: 1; padding: 8px 12px; font-size: 11px;">
-                        Clear Breakpoints
-                    </button>
-                </div>
             </div>
 
-            <!-- Local Variable Watcher (Visually hidden but logic kept) -->
-            <div class="control-section" id="variables-watch-section" style="display: none;">
-                <div class="section-title">Variables Watch</div>
-                <div class="variables-card">
-                    <div class="variables-grid" id="variables-display">
-                        <div
-                            style="grid-column: 1 / -1; color: var(--text-muted); font-size: 12px; text-align: center;">
-                            Start sorting to watch variables
+            <!-- Combined container for Code Trace and Accordion to ensure vertical stack -->
+            <div id="vertical-stack-container" style="display: flex; flex-direction: column; gap: 16px;">
+                
+                <!-- Code Display panel -->
+                <div class="control-section" id="code-trace-section">
+                    <div class="section-title">Trace Code</div>
+                    <div id="code-display-container">
+                        <div class="code-header">
+                            <span>Source Code (Click line number for Breakpoint)</span>
+                        </div>
+                        <div id="code-display">
+                            <!-- Code lines are dynamically injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Collapsible Accordion for Settings (Moved BELOW Code Trace) -->
+                <div id="controls-accordion" class="accordion open">
+                    <div class="accordion-header" id="accordion-toggle">
+                        <span>Algorithm Settings</span>
+                        <span class="accordion-arrow">▲</span>
+                    </div>
+                    <div class="accordion-content">
+                        <!-- Algorithm Selection -->
+                        <div class="control-section">
+                            <div class="section-title">Select Algorithm</div>
+                            <div class="form-group">
+                                <select id="select-algo">
+                                    <option value="" disabled selected>Loading algorithms...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Array Generator Configuration -->
+                        <div class="control-section">
+                            <div class="section-title">Array Parameters</div>
+                            <div class="form-group">
+                                <label for="slider-size">Number of Items: <span id="val-size" class="value">30</span></label>
+                                <input type="range" id="slider-size" min="5" max="250" value="30">
+                            </div>
+                            <div class="form-group">
+                                <label for="select-order">Initial Order</label>
+                                <select id="select-order">
+                                    <option value="random">Random Data</option>
+                                    <option value="sorted">Already Sorted</option>
+                                    <option value="reversed">Reversed Data</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 5px;">
+                                <button id="btn-generate" class="secondary" style="flex: 1; padding: 10px; font-size: 12px;">
+                                    Generate New Data
+                                </button>
+                                <button id="btn-clear-breakpoints" class="secondary" style="flex: 1; padding: 10px; font-size: 12px;">
+                                    Clear Breakpoints
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Execution Speed -->
+                        <div class="control-section">
+                            <div class="section-title">Speed Slider</div>
+                            <div class="form-group">
+                                <label for="slider-speed">Delay (ms): <span id="val-speed" class="value">20 ms</span></label>
+                                <input type="range" id="slider-speed" min="0" max="1000" step="5" value="20">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Code Display panel -->
-            <div class="control-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-                <div class="section-title">Trace Code</div>
-                <div id="code-display-container">
-                    <div class="code-header">
-                        <span>Source Code (Click line number for Breakpoint)</span>
-                    </div>
-                    <div id="code-display">
-                        <!-- Code lines are dynamically injected here -->
+            <!-- Local Variable Watcher -->
+            <div class="control-section" id="variables-watch-section" style="display: none;">
+                <div class="section-title">Variables Watch</div>
+                <div class="variables-card">
+                    <div class="variables-grid" id="variables-display">
+                        <div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 12px; text-align: center;">
+                            Start sorting to watch variables
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- ... Rest of the file remains unchanged ... -->
     <div id="right-panel">
-        <!-- Top Navigation / Stats bar -->
         <div class="top-navbar">
             <div class="algo-metadata">
                 <h2 id="algo-title">Loading Algorithm...</h2>
@@ -135,8 +133,7 @@
                     <span class="badge worst">Worst: <b id="val-worst">-</b></span>
                 </div>
             </div>
-
-            <div class="counters-row">
+            <div class="counters-row" style="align-items: center;">
                 <div class="counter-card">
                     <span class="counter-label">Compares</span>
                     <span class="counter-value" id="count-compares">0</span>
@@ -145,10 +142,12 @@
                     <span class="counter-label">Swaps/Writes</span>
                     <span class="counter-value" id="count-swaps">0</span>
                 </div>
+                <button id="btn-toggle-history" class="btn secondary" style="padding: 8px 14px; font-size: 12px; height: 38px;">
+                    📊 History
+                </button>
             </div>
         </div>
 
-        <!-- HTML5 Canvas Visualizer Container -->
         <div id="canvas-container">
             <div id="canvas-overlay" class="canvas-overlay">
                 <div class="overlay-title" id="overlay-title">Sorts of Sorts Visualizer</div>
@@ -157,7 +156,6 @@
             <canvas id="visualizer-canvas"></canvas>
         </div>
 
-        <!-- Description Card -->
         <div class="bottom-info-panel">
             <h4>Algorithm Description</h4>
             <p id="algo-desc">Loading description...</p>
@@ -166,8 +164,33 @@
         </div>
     </div>
 
-    <!-- Application Script -->
+    <div id="history-sidebar">
+        <div class="history-sidebar-header">
+            <h3>Laboratory Run Log</h3>
+            <button id="btn-clear-history" class="btn secondary" style="padding: 4px 8px; font-size: 11px;">Clear</button>
+            <button id="btn-close-history" class="btn secondary" style="padding: 4px 8px; font-size: 11px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--swap-color);">Close</button>
+        </div>
+        <div class="history-sidebar-content">
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th style="text-align: left;">Setup</th>
+                        <th style="text-align: left;">Algorithm</th>
+                        <th style="text-align: right;">Compares</th>
+                        <th style="text-align: right;">Swaps</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: var(--text-muted); font-size: 12px; padding: 20px;">
+                            No history entries recorded yet.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <script type="module" src="src/app.js"></script>
 </body>
-
 </html>

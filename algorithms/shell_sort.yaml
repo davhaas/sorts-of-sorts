@@ -30,29 +30,29 @@ display_code:
 generator_code: >
   function* shellSort(arr) {
     let n = arr.length;
-    yield { line: 1, vars: { n } };
+    yield { line: 2, vars: { n } };
     for (let gap = Math.floor(n/2); gap > 0; gap = Math.floor(gap/2)) {
-      yield { line: 2, vars: { n, gap } };
+      yield { line: 3, vars: { n, gap } };
       for (let i = gap; i < n; i += 1) {
-        yield { line: 3, vars: { n, gap, i } };
+        yield { line: 4, vars: { n, gap, i } };
         let temp = arr[i];
-        yield { line: 4, vars: { n, gap, i, temp } };
+        yield { line: 5, vars: { n, gap, i, temp } };
         let j;
-        yield { line: 5, vars: { n, gap, i, temp, j } };
-        for (j = i; j >= gap; j -= gap) {
-          // arr[j - gap] is compared to temp (which is originally arr[i])
-          yield { line: 6, compare: [j - gap, i], vars: { n, gap, i, temp, j } };
-          if (arr[j - gap] > temp) {
+        yield { line: 6, vars: { n, gap, i, temp } };
+        
+        for (j = i; ; j -= gap) {
+          yield { line: 7, compare: j >= gap ? [j - gap, i] : [], vars: { n, gap, i, temp, j } };
+          if (j >= gap && arr[j - gap] > temp) {
             arr[j] = arr[j - gap];
-            yield { line: 7, assign: [j, arr[j - gap]], vars: { n, gap, i, temp, j } };
+            yield { line: 8, assign: [j, arr[j - gap]], vars: { n, gap, i, temp, j } };
           } else {
             break;
           }
         }
         arr[j] = temp;
-        yield { line: 9, assign: [j, temp], vars: { n, gap, i, temp, j } };
+        yield { line: 10, assign: [j, temp], vars: { n, gap, i, temp, j } };
       }
     }
-    yield { line: 12, vars: { n } };
+    yield { line: 13, vars: { n } };
     return arr;
   }

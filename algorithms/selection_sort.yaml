@@ -31,23 +31,27 @@ display_code:
 generator_code: >
   function* selectionSort(arr) {
     let n = arr.length;
-    yield { line: 1, vars: { n } };
+    yield { line: 2, vars: { n } };
     for (let i = 0; i < n - 1; i++) {
+      yield { line: 3, vars: { n, i } };
       let minIdx = i;
-      yield { line: 3, vars: { n, i, minIdx } };
+      yield { line: 4, vars: { n, i, minIdx } };
       for (let j = i + 1; j < n; j++) {
-        yield { line: 5, compare: [j, minIdx], vars: { n, i, minIdx, j } };
+        yield { line: 5, vars: { n, i, minIdx, j } };
+        yield { line: 6, compare: [j, minIdx], vars: { n, i, minIdx, j } };
         if (arr[j] < arr[minIdx]) {
           minIdx = j;
-          yield { line: 6, vars: { n, i, minIdx, j } };
+          yield { line: 7, vars: { n, i, minIdx, j } };
         }
       }
       yield { line: 10, vars: { n, i, minIdx } };
       if (minIdx !== i) {
         let temp = arr[i];
+        yield { line: 11, vars: { n, i, minIdx, temp } };
         arr[i] = arr[minIdx];
+        yield { line: 12, assign: [i, arr[minIdx]], vars: { n, i, minIdx, temp } };
         arr[minIdx] = temp;
-        yield { line: 11, swap: [i, minIdx], vars: { n, i, minIdx } };
+        yield { line: 13, assign: [minIdx, temp], vars: { n, i, minIdx, temp } };
       }
     }
     yield { line: 16, vars: { n } };

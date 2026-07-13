@@ -4,6 +4,7 @@ A modern JavaScript SPA visualizer for classic sorting algorithms, reconstructed
 
 ## Documentation
 - Master Index: [docs/index.md](docs/index.md)
+- Project Changelog: [changelog.md](changelog.md)
 - Problem Statement: [docs/problem_statement.md](docs/problem_statement.md)
 - Architecture Blueprint & How It Works: [docs/how_it_works.md](docs/how_it_works.md)
 - Architecture Plan: [docs/implementation_plan.md](docs/implementation_plan.md)

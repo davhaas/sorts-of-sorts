@@ -27,26 +27,26 @@ display_code:
 generator_code: >
   function* insertionSort(arr) {
     let n = arr.length;
-    yield { line: 1, vars: { n } };
+    yield { line: 2, vars: { n } };
     for (let i = 1; i < n; i++) {
-      yield { line: 2, vars: { n, i } };
+      yield { line: 3, vars: { n, i } };
       let key = arr[i];
-      yield { line: 3, vars: { n, i, key } };
+      yield { line: 4, vars: { n, i, key } };
       let j = i - 1;
-      yield { line: 4, vars: { n, i, key, j } };
-      while (j >= 0) {
-        yield { line: 5, compare: [j, i], vars: { n, i, key, j } };
-        if (arr[j] > key) {
+      yield { line: 5, vars: { n, i, key, j } };
+      while (true) {
+        yield { line: 6, compare: j >= 0 ? [j] : [], vars: { n, i, key, j } };
+        if (j >= 0 && arr[j] > key) {
           arr[j + 1] = arr[j];
-          yield { line: 6, assign: [j + 1, arr[j]], vars: { n, i, key, j } };
+          yield { line: 7, assign: [j + 1, arr[j]], vars: { n, i, key, j } };
           j = j - 1;
-          yield { line: 7, vars: { n, i, key, j } };
+          yield { line: 8, vars: { n, i, key, j } };
         } else {
           break;
         }
       }
       arr[j + 1] = key;
-      yield { line: 9, assign: [j + 1, key], vars: { n, i, key, j } };
+      yield { line: 10, assign: [j + 1, key], vars: { n, i, key, j } };
     }
     yield { line: 12, vars: { n } };
     return arr;

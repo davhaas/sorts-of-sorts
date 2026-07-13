@@ -30,22 +30,28 @@ display_code:
 generator_code: >
   function* bubbleSort(arr) {
     let n = arr.length;
-    yield { line: 1, vars: { n } };
+    yield { line: 2, vars: { n } };
     for (let i = 0; i < n - 1; i++) {
+      yield { line: 3, vars: { n, i } };
       let swapped = false;
-      yield { line: 2, vars: { n, i, swapped } };
+      yield { line: 4, vars: { n, i, swapped } };
       for (let j = 0; j < n - i - 1; j++) {
-        yield { line: 4, compare: [j, j + 1], vars: { n, i, j, swapped } };
+        yield { line: 5, vars: { n, i, swapped, j } };
+        yield { line: 6, compare: [j, j + 1], vars: { n, i, swapped, j } };
         if (arr[j] > arr[j + 1]) {
           let temp = arr[j];
+          yield { line: 7, vars: { n, i, swapped, j, temp } };
           arr[j] = arr[j + 1];
+          yield { line: 8, assign: [j, arr[j + 1]], vars: { n, i, swapped, j, temp } };
           arr[j + 1] = temp;
-          yield { line: 5, swap: [j, j + 1], vars: { n, i, j, swapped } };
+          yield { line: 9, assign: [j + 1, temp], vars: { n, i, swapped, j, temp } };
           swapped = true;
+          yield { line: 10, vars: { n, i, swapped, j, temp } };
         }
       }
-      yield { line: 12, vars: { n, i, swapped } };
+      yield { line: 13, vars: { n, i, swapped } };
       if (!swapped) {
+        yield { line: 13, vars: { n, i, swapped, breaking: true } };
         break;
       }
     }

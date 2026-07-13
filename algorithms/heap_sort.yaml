@@ -1,0 +1,87 @@
+id: "heap_sort"
+name: "Heap Sort"
+complexity:
+  best: "O(n log n)"
+  average: "O(n log n)"
+  worst: "O(n log n)"
+runtime_behavior:
+  sorted: "Best case: O(n log n). Even if the array is already sorted, building the max-heap structure and repeatedly sifting down requires full logarithmic passes."
+  random: "Average case: O(n log n). Highly efficient and predictable execution flow balancing max-heap formation with linear elements extraction."
+  reversed: "Worst case: O(n log n). Uniform, stable performance because the max-heap structure accommodates inverted data sets cleanly without slowing down."
+description: >
+  An in-place sorting algorithm that structures the array elements into a binary max-heap. It repeatedly pulls the maximum item (the root) to the end of the array, shrinking the heap workspace until the entire sequence is sorted.
+display_code:
+  - "function heapSort(arr) {"
+  - "  let n = arr.length;"
+  - "  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {"
+  - "    heapify(arr, n, i);"
+  - "  }"
+  - "  for (let i = n - 1; i > 0; i--) {"
+  - "    swap(arr, 0, i);"
+  - "    heapify(arr, i, 0);"
+  - "  }"
+  - "}"
+  - ""
+  - "function heapify(arr, size, root) {"
+  - "  let largest = root;"
+  - "  let left = 2 * root + 1;"
+  - "  let right = 2 * root + 2;"
+  - "  if (left < size && arr[left] > arr[largest]) largest = left;"
+  - "  if (right < size && arr[right] > arr[largest]) largest = right;"
+  - "  if (largest !== root) {"
+  - "    swap(arr, root, largest);"
+  - "    heapify(arr, size, largest);"
+  - "  }"
+  - "}"
+generator_code: >
+  function* heapSort(arr) {
+    let n = arr.length;
+    yield { line: 2, vars: { n } };
+    
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+      yield { line: 3, vars: { n, i } };
+      yield { line: 4, vars: { n, i } };
+      yield* heapify(arr, n, i);
+    }
+    
+    for (let i = n - 1; i > 0; i--) {
+      yield { line: 6, vars: { n, i } };
+      let temp = arr[0];
+      arr[0] = arr[i];
+      arr[i] = temp;
+      yield { line: 7, swap: [0, i], vars: { n, i } };
+      
+      yield { line: 8, vars: { n, i } };
+      yield* heapify(arr, i, 0);
+    }
+
+    function* heapify(arr, size, root) {
+      let largest = root;
+      yield { line: 13, vars: { size, root, largest } };
+      let left = 2 * root + 1;
+      yield { line: 14, vars: { size, root, largest, left } };
+      let right = 2 * root + 2;
+      yield { line: 15, vars: { size, root, largest, left, right } };
+      
+      yield { line: 16, compare: left < size ? [left, largest] : [], vars: { size, root, largest, left, right } };
+      if (left < size && arr[left] > arr[largest]) {
+        largest = left;
+      }
+      
+      yield { line: 17, compare: right < size ? [right, largest] : [], vars: { size, root, largest, left, right } };
+      if (right < size && arr[right] > arr[largest]) {
+        largest = right;
+      }
+      
+      yield { line: 18, vars: { size, root, largest } };
+      if (largest !== root) {
+        let temp = arr[root];
+        arr[root] = arr[largest];
+        arr[largest] = temp;
+        yield { line: 19, swap: [root, largest], vars: { size, root, largest } };
+        
+        yield { line: 20, vars: { size, root, largest } };
+        yield* heapify(arr, size, largest);
+      }
+    }
+  }

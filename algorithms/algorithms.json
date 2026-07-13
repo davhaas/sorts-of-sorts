@@ -1,8 +1,11 @@
 [
-  "selection_sort.yaml",
   "bubble_sort.yaml",
+  "selection_sort.yaml",
   "insertion_sort.yaml",
   "shell_sort.yaml",
+  "merge_sort.yaml",
+  "merge_sort_scratchpad.yaml",
+  "heap_sort.yaml",
   "quick_sort.yaml",
   "quick_sort_average_2.yaml",
   "quick_sort_average_3.yaml"

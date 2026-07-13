@@ -33,35 +33,40 @@ display_code:
 generator_code: >
   function* quickSort(arr) {
     function* quickSortHelper(p, r) {
-      yield { line: 1, vars: { p, r } };
+      yield { line: 2, vars: { p, r } };
       if (p < r) {
-        // Inline Partitioning
-        yield { line: 9, vars: { p, r } };
+        yield { line: 3, vars: { p, r } };
         let mid = Math.floor((p + r) / 2);
+        yield { line: 10, vars: { p, r, mid } };
         let x = Math.floor((arr[p] + arr[r] + arr[mid]) / 3);
-        yield { line: 10, vars: { p, r, mid, x } };
+        yield { line: 11, vars: { p, r, mid, x } };
         let i = p - 1, j = r + 1;
-        yield { line: 11, vars: { p, r, x, i, j } };
+        yield { line: 12, vars: { p, r, mid, x, i, j } };
         
         while (true) {
+          yield { line: 13, vars: { p, r, x, i, j } };
           while (true) {
             j--;
-            yield { line: 13, compare: [j], vars: { p, r, x, i, j } };
+            yield { line: 14, compare: [j], vars: { p, r, x, i, j } };
             if (arr[j] <= x) break;
           }
           while (true) {
             i++;
-            yield { line: 14, compare: [i], vars: { p, r, x, i, j } };
+            yield { line: 15, compare: [i], vars: { p, r, x, i, j } };
             if (arr[i] >= x) break;
           }
           
           if (i < j) {
             let temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
-            yield { line: 15, swap: [i, j], vars: { p, r, x, i, j } };
+            yield { line: 16, swap: [i, j], vars: { p, r, x, i, j } };
           } else {
+            yield { line: 17, vars: { p, r, x, i, j } };
             let q = j;
-            yield { line: 16, vars: { p, r, x, i, j, q } };
+            
+            yield { line: 4, vars: { p, r, q } };
             yield* quickSortHelper(p, q);
+            
+            yield { line: 5, vars: { p, r, q } };
             yield* quickSortHelper(q + 1, r);
             break;
           }
